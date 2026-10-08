@@ -182,6 +182,7 @@ export class CursorStatus extends Base {
   #offT?: ReturnType<typeof setTimeout>;
   #leaveT?: ReturnType<typeof setTimeout>;
   #hit = 0; // pending post-scroll hit test
+  #at = [0, 0]; // where the pointer really is (#x, #y freeze outside the scope)
 
   constructor() {
     super();
@@ -277,11 +278,12 @@ export class CursorStatus extends Base {
     if (t === 'resize') return this.#viewport();
     if (t === 'scroll') {
       // Scrolling moves the page under a still pointer, and no pointer event says so: check what's
-      // under it now, once per frame, so a scoped pill leaves when its area scrolls away.
+      // under it now, once per frame, so a scoped pill leaves (or returns) with its area.
       if (this.#se && this.open && !this.#hit) {
         this.#hit = requestAnimationFrame(() => {
+          const [x, y] = this.#at;
           this.#hit = 0;
-          this.#leave(!!this.#se?.contains(document.elementFromPoint(this.#x, this.#y)));
+          this.#move(x, y, document.elementFromPoint(x, y), this.#touch);
         });
       }
       return;
@@ -298,15 +300,19 @@ export class CursorStatus extends Base {
       // Fires between elements too; it's only a leave if no dragover follows.
       if (!pe.relatedTarget) this.#leaveT = setTimeout(() => this.#leave(), 100);
     } else {
-      const inside = !this.#se || this.#se.contains(e.target as Node);
-      clearTimeout(this.#leaveT);
-      if (inside) {
-        // The freshest sample, when the browser coalesced several moves into this event.
-        const p = pe.getCoalescedEvents?.().at(-1) ?? pe;
-        this.#point(p.clientX, p.clientY, pe.pointerType === 'touch');
-      }
-      if (inside !== this.#inside) this.#leave(inside);
+      // The freshest sample, when the browser coalesced several moves into this event.
+      const p = pe.getCoalescedEvents?.().at(-1) ?? pe;
+      this.#move(p.clientX, p.clientY, e.target, pe.pointerType === 'touch');
     }
+  }
+
+  /** The pointer is at (x, y) over `target`: follow it inside the scope, freeze outside. */
+  #move(x: number, y: number, target: EventTarget | null, touch: boolean) {
+    const inside = !this.#se || this.#se.contains(target as Node | null);
+    this.#at = [x, y];
+    clearTimeout(this.#leaveT);
+    if (inside) this.#point(x, y, touch);
+    if (inside !== this.#inside) this.#leave(inside);
   }
 
   #leave(inside = false) {

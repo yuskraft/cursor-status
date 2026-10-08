@@ -37,15 +37,6 @@ on a button is gone once you start dragging.
   when armed, “Moved to trash” after.
 - **Modifier hints mid-drag**: “Hold ⇧ to keep ratio”, “⌥ to duplicate”.
 
-## When not to
-
-- The result **outlives the gesture** or needs action: use a toast with Undo.
-- A **plain button click**: show the status on the button.
-- **Long or multi-line** text.
-- Anything **interactive**: it moves away from the pointer.
-- As the **only** feedback on touch or keyboard. It’s supplementary; reflect the outcome in the UI
-  too.
-
 ## Install
 
 ```sh
@@ -242,7 +233,7 @@ to `position: fixed`.
 
 ## Size
 
-Zero dependencies. 4.4 kB min+gzip with styles included, checked in CI with
+Zero dependencies. Under 4.5 kB min+gzip with styles included, checked in CI with
 [size-limit](https://github.com/ai/size-limit).
 
 ## Development
