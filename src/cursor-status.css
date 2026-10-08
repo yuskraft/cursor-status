@@ -149,16 +149,26 @@
   fill: var(--cs-error);
 }
 
+/* A glyph draws in once the disc has landed. Leaving, it fades out fast and resets unseen instead
+   of un-drawing, so ✕ → ✓ (or back) reads as one swap rather than the icon collapsing. */
 .c,
 .x {
   stroke: var(--cs-on-success);
   stroke-dasharray: 12;
   stroke-dashoffset: 12;
-  transition: 0.32s 0.12s;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    stroke-dashoffset 0s 0.15s;
 }
 
 .x {
   stroke: var(--cs-on-error, #fff8ef);
+}
+
+[data-icon='check'] .c,
+[data-icon='cross'] .x {
+  transition: stroke-dashoffset 0.32s 0.12s;
 }
 
 [data-icon='ring'] :is(.t, .f),

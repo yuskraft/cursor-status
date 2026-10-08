@@ -240,7 +240,7 @@ to `position: fixed`.
 
 ## Size
 
-Zero dependencies. 4.3 kB min+gzip with styles included, checked in CI with
+Zero dependencies. 4.4 kB min+gzip with styles included, checked in CI with
 [size-limit](https://github.com/ai/size-limit).
 
 ## Development

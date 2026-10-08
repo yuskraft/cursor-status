@@ -270,6 +270,27 @@ pre code {
   outline: none;
 }
 
+/* With JS, tiles are placed into fixed columns once per breakpoint (main.ts), so a tile changing
+   height never moves other tiles across columns the way CSS columns rebalance. */
+.grid.cols {
+  columns: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.cols .tile {
+  margin: 0;
+}
+
 @media (max-width: 1023px) {
   .grid {
     columns: 2;
@@ -1007,6 +1028,8 @@ input[type='range'] {
 
 .live-code {
   margin: 0;
+  /* room for the longest snippet (8 lines), so switching kinds never resizes the tile */
+  min-height: calc(8 * 1.65em + 24px);
   padding: 12px 14px;
   overflow-x: auto;
   border-radius: 8px;

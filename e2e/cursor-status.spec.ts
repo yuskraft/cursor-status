@@ -174,6 +174,32 @@ test('morphs through progress, success and error with text, icon and live region
   expect([p.icon, p.text, p.spoken]).toEqual(['cross', "Can't drop here", "Can't drop here"]);
 });
 
+test('swapping ✕ for ✓ fades the old glyph instead of un-drawing it', async ({ page }) => {
+  await page.mouse.move(200, 150);
+  await run(page, `cs.info('Release to delete', { icon: 'cross' })`);
+  await settled(page);
+  const frames = await page.evaluate(async () => {
+    const cs = document.getElementById('cs') as HTMLElementTagNameMap['cursor-status'];
+    const root = cs.shadowRoot!;
+    const style = (sel: string) => getComputedStyle(root.querySelector(sel)!);
+    cs.success('Moved to trash');
+    const out: { cross: [number, string]; check: string }[] = [];
+    const t0 = performance.now();
+    while (performance.now() - t0 < 600) {
+      await new Promise((r) => requestAnimationFrame(r));
+      out.push({
+        cross: [+style('.x').opacity, style('.x').strokeDashoffset],
+        check: style('.c').strokeDashoffset,
+      });
+    }
+    return out;
+  });
+  // while the cross is still visible at all, it stays fully drawn
+  for (const f of frames) if (f.cross[0] > 0) expect(parseFloat(f.cross[1])).toBe(0);
+  expect(frames.at(-1)!.cross[0]).toBe(0);
+  expect(parseFloat(frames.at(-1)!.check)).toBe(0);
+});
+
 test('the label width animates to the new text', async ({ page }) => {
   await page.mouse.move(100, 100);
   await run(page, `cs.show('Hold to delete')`);

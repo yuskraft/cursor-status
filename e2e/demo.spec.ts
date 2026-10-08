@@ -76,6 +76,29 @@ test.describe('demo site', () => {
     expect(label).toBe('Snapped · 30°');
   });
 
+  test('tiles stay in their columns when a tile changes height', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(DEMO);
+    const columns = () =>
+      page.evaluate(() =>
+        [...document.querySelectorAll('.tile')].map(
+          (t) => `${t.id}@${Math.round(t.getBoundingClientRect().x)}`,
+        ),
+      );
+    const before = await columns();
+    for (const kind of ['Success', 'Info', 'Error', 'Progress']) {
+      await page.locator('#play .seg label', { hasText: kind }).click();
+      expect(await columns()).toEqual(before);
+    }
+    const row = page.locator('#hold .row').first();
+    await row.focus();
+    await page.keyboard.down(' ');
+    await page.waitForTimeout(1100);
+    await page.keyboard.up(' ');
+    await page.waitForTimeout(400);
+    expect(await columns()).toEqual(before);
+  });
+
   test('has no horizontal scroll on a phone', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(DEMO);

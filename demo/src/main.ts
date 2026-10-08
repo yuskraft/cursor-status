@@ -126,9 +126,60 @@ for (const strip of document.querySelectorAll<HTMLButtonElement>('.strip[data-co
   });
 }
 
-// Tiles blur in once, staggered, as they first scroll into view.
+// Masonry: split the tiles into columns in reading order, balanced by height. This runs once per
+// breakpoint; CSS columns alone would rebalance whenever any tile changes height (a playground
+// setting, a deleted row) and tiles would jump between columns.
 
-const tiles = [...document.querySelectorAll<HTMLElement>('.tile')];
+const grid = document.getElementById('gallery')!;
+const tiles = [...grid.querySelectorAll<HTMLElement>('.tile')];
+const wide = matchMedia('(min-width: 1024px)');
+const medium = matchMedia('(min-width: 640px)');
+const GAP = 16;
+
+/** Contiguous split of `heights` into `n` columns that minimises the tallest one. */
+function split(heights: number[], n: number): number[][] {
+  const stack = (from: number, to: number) =>
+    heights.slice(from, to).reduce((sum, h) => sum + h + GAP, -GAP);
+  let best: { cols: number[][]; tallest: number } = { cols: [], tallest: Infinity };
+  const walk = (from: number, left: number, cols: number[][], tallest: number) => {
+    if (tallest >= best.tallest) return;
+    if (left === 1) {
+      const last = heights.map((_, i) => i).slice(from);
+      const t = Math.max(tallest, stack(from, heights.length));
+      if (t < best.tallest) best = { cols: [...cols, last], tallest: t };
+      return;
+    }
+    for (let to = from + 1; to <= heights.length - left + 1; to++) {
+      const col = heights.map((_, i) => i).slice(from, to);
+      walk(to, left - 1, [...cols, col], Math.max(tallest, stack(from, to)));
+    }
+  };
+  walk(0, Math.min(n, heights.length), [], 0);
+  return best.cols;
+}
+
+function layout() {
+  const n = wide.matches ? 3 : medium.matches ? 2 : 1;
+  // Back to CSS columns for a moment: same column width, so the heights measured are the real ones.
+  grid.classList.remove('cols');
+  grid.replaceChildren(...tiles);
+  if (n === 1) return;
+  const heights = tiles.map((t) => t.offsetHeight);
+  const cols = split(heights, n).map((indices) => {
+    const col = document.createElement('div');
+    col.className = 'col';
+    col.append(...indices.map((i) => tiles[i]!));
+    return col;
+  });
+  grid.replaceChildren(...cols);
+  grid.classList.add('cols');
+}
+
+layout();
+wide.addEventListener('change', layout);
+medium.addEventListener('change', layout);
+
+// Tiles blur in once, staggered, as they first scroll into view.
 if ('IntersectionObserver' in window) {
   const seen = new IntersectionObserver(
     (entries) => {
