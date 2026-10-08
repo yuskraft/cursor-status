@@ -179,8 +179,10 @@ Several instances on one page are independent; give each a `scope` to tie it to 
   it (falls back to `position: fixed`).
 - **Drag and drop:** follows `dragover`, so it works while dragging files; also during pointer
   capture.
-- **Leaving:** when the pointer leaves the window or `scope`, it freezes and hides, unless it’s
-  showing a success.
+- **Leaving:** when the pointer leaves the window or `scope` (including when scrolling moves the
+  area out from under it), it freezes and fades out. Only a lingering result from `success()` or
+  `flash()` stays until its linger ends; nothing appears outside the scope. `follow="manual"`
+  isn’t tied to the pointer, so the scope doesn’t apply.
 - Nothing renders until a pointer position is known.
 
 ## Theming

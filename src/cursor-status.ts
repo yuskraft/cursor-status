@@ -46,7 +46,7 @@ const TOUCH_LIFT = 78; // on touch, sit centred this far above the finger
 const CHROME_ICON = 9 + 18 + 8 + 14;
 const CHROME_NONE = 9 + 5 + 14;
 const EVENTS =
-  'pointermove pointerdown pointerup pointercancel pointerout dragover dragleave drop dragend';
+  'pointermove pointerdown pointerup pointercancel pointerout dragover dragleave drop dragend scroll';
 const { abs, min, max } = Math;
 
 /**
@@ -181,6 +181,7 @@ export class CursorStatus extends Base {
   #hideT?: ReturnType<typeof setTimeout>;
   #offT?: ReturnType<typeof setTimeout>;
   #leaveT?: ReturnType<typeof setTimeout>;
+  #hit = 0; // pending post-scroll hit test
 
   constructor() {
     super();
@@ -274,6 +275,17 @@ export class CursorStatus extends Base {
     const t = e.type;
     const pe = e as PointerEvent;
     if (t === 'resize') return this.#viewport();
+    if (t === 'scroll') {
+      // Scrolling moves the page under a still pointer, and no pointer event says so: check what's
+      // under it now, once per frame, so a scoped pill leaves when its area scrolls away.
+      if (this.#se && this.open && !this.#hit) {
+        this.#hit = requestAnimationFrame(() => {
+          this.#hit = 0;
+          this.#leave(!!this.#se?.contains(document.elementFromPoint(this.#x, this.#y)));
+        });
+      }
+      return;
+    }
     if (t === 'pointerdown') this.#down = true;
     if (/up|cancel|drop|end/.test(t)) {
       this.#down = false;
@@ -335,10 +347,17 @@ export class CursorStatus extends Base {
     this.#wake();
   }
 
-  /** Visible = open, position known, inside the window and scope (a success may stay outside). */
+  /**
+   * Visible = open, position known, and the pointer inside the window and scope. A lingering result
+   * (success() or flash() after the gesture) that's already showing may stay outside, but nothing
+   * appears there. Manual positioning isn't tied to the pointer, so the scope doesn't apply.
+   */
   #sync() {
     const vis =
-      this.open && this.#known && this.isConnected && (this.#inside || this.kind === 'success');
+      this.open &&
+      this.#known &&
+      this.isConnected &&
+      (this.#inside || this.follow === 'manual' || (this.#lingering && this.#vis));
     const p = this.#p;
     if (vis === this.#vis) return;
     this.#vis = vis;

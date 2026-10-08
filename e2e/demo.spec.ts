@@ -99,6 +99,40 @@ test.describe('demo site', () => {
     expect(await columns()).toEqual(before);
   });
 
+  test('the playground pill stays inside its stage, success included', async ({ page }) => {
+    await page.goto(DEMO);
+    const pill = page.locator('#play cursor-status');
+    const on = () =>
+      pill.evaluate((el) => el.shadowRoot!.querySelector('.p')!.hasAttribute('data-on'));
+    const stage = (await page.locator('#play .stage').boundingBox())!;
+    await page.mouse.move(stage.x + 80, stage.y + 70, { steps: 4 });
+    await expect.poll(on).toBe(true);
+    for (const kind of ['Success', 'Info', 'Error', 'Success']) {
+      await page.locator('#play .seg label', { hasText: kind }).click();
+      await page.waitForTimeout(100);
+      expect(await on(), `${kind} clicked outside the stage`).toBe(false);
+    }
+    await page.locator('#play [data-flash]').click();
+    await expect.poll(on).toBe(true); // Flash is pinned inside the stage
+  });
+
+  test('scrolling the stage away from under the pointer dismisses the pill', async ({ page }) => {
+    await page.goto(DEMO);
+    const on = () =>
+      page
+        .locator('#play cursor-status')
+        .evaluate((el) => el.shadowRoot!.querySelector('.p')!.hasAttribute('data-on'));
+    await page.locator('#play .seg label', { hasText: 'Success' }).click();
+    await page.locator('#play .stage').scrollIntoViewIfNeeded();
+    const stage = (await page.locator('#play .stage').boundingBox())!;
+    await page.mouse.move(stage.x + 80, stage.y + 70, { steps: 4 });
+    await expect.poll(on).toBe(true);
+    await page.mouse.wheel(0, 500); // the page moves; the pointer doesn't
+    await expect.poll(on).toBe(false);
+    await page.mouse.wheel(0, -500); // and back under the pointer: it returns
+    await expect.poll(on).toBe(true);
+  });
+
   test('has no horizontal scroll on a phone', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(DEMO);

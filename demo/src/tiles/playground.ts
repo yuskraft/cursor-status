@@ -3,7 +3,7 @@ import type {
   CursorStatusKind,
   CursorStatusPlacement,
 } from '@yuskraft/cursor-status';
-import { esc, statusOf } from '../util';
+import { anchor, esc, statusOf } from '../util';
 
 /** Every option, live, with the code that produces it. */
 export function playground(tile: HTMLElement) {
@@ -11,6 +11,7 @@ export function playground(tile: HTMLElement) {
   const form = tile.querySelector('form')!;
   const code = tile.querySelector('.live-code code')!;
   const flash = tile.querySelector<HTMLButtonElement>('[data-flash]')!;
+  const stage = tile.querySelector<HTMLElement>('.stage')!;
   let reopen = 0;
 
   function read() {
@@ -61,8 +62,13 @@ export function playground(tile: HTMLElement) {
   form.addEventListener('submit', (e) => e.preventDefault());
   flash.addEventListener('click', () => {
     const s = read();
+    // The button is outside the stage, so pin the flash inside it rather than at the pointer.
+    anchor(status, stage);
     status.flash(s.label);
-    reopen = window.setTimeout(apply, status.linger + 450);
+    reopen = window.setTimeout(() => {
+      status.follow = 'pointer';
+      apply();
+    }, status.linger + 450);
   });
   apply();
 }

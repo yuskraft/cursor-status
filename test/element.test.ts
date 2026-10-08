@@ -374,6 +374,45 @@ describe('scope and follow', () => {
     expect(el.open).toBe(true);
   });
 
+  it('nothing appears outside the scope; only a lingering result stays after leaving', async () => {
+    const area = document.createElement('div');
+    area.id = 'area';
+    const outside = document.createElement('div');
+    document.body.append(area, outside);
+    const el = mount({ scope: '#area' }, area);
+    move(20, 20, area);
+    move(30, 30, outside);
+    el.show('Done', { kind: 'success' });
+    await flush();
+    expect(visible(el)).toBe(false); // e.g. a "Success" control outside the area
+    move(25, 25, area);
+    expect(visible(el)).toBe(true);
+    move(35, 35, outside);
+    expect(visible(el)).toBe(false); // a standing success leaves like any other state
+
+    move(25, 25, area);
+    pointer('pointerdown', 25, 25, area);
+    el.success('Removed'); // the end of a gesture: lingers
+    await flush();
+    pointer('pointerup', 25, 25, area);
+    move(35, 35, outside);
+    expect(visible(el)).toBe(true); // frozen where it was until the linger runs out
+  });
+
+  it('follow="manual" ignores the scope', async () => {
+    const area = document.createElement('div');
+    area.id = 'area';
+    const outside = document.createElement('div');
+    document.body.append(area, outside);
+    const el = mount({ scope: '#area' }, area);
+    move(30, 30, outside);
+    el.follow = 'manual';
+    el.moveTo(100, 100);
+    el.info('From the keyboard');
+    await flush();
+    expect(visible(el)).toBe(true);
+  });
+
   it('follow="manual" ignores the pointer and goes where moveTo() says', async () => {
     const el = mount({ follow: 'manual' });
     el.show('Pinned');
