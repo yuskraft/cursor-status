@@ -1,0 +1,72 @@
+{
+  "name": "@yuskraft/cursor-status",
+  "version": "0.1.0",
+  "description": "A cursor-following status pill, as a zero-dependency web component.",
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "cursor",
+    "pointer",
+    "status",
+    "toast",
+    "feedback",
+    "drag-and-drop"
+  ],
+  "license": "MIT",
+  "author": "Nurlan Yusifli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuskraft/cursor-status.git"
+  },
+  "homepage": "https://yuskraft.github.io/cursor-status/",
+  "bugs": "https://github.com/yuskraft/cursor-status/issues",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./define": {
+      "types": "./dist/define.d.ts",
+      "default": "./dist/define.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "./dist/define.js",
+    "./src/define.ts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite --config demo/vite.config.ts",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "build:demo": "vite build --config demo/vite.config.ts",
+    "preview": "vite preview --config demo/vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "size": "size-limit",
+    "prepublishOnly": "pnpm build"
+  },
+  "packageManager": "pnpm@11.20.0",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@biomejs/biome": "^2.5.15",
+    "@playwright/test": "^1.63.0",
+    "@size-limit/preset-small-lib": "^14.1.0",
+    "happy-dom": "^20.14.5",
+    "size-limit": "^14.1.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  }
+}

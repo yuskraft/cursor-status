@@ -1,0 +1,253 @@
+/* <cursor-status> shadow styles. Pill geometry is mirrored by CHROME_* in cursor-status.ts.
+   Tokens the light variant changes are declared here; the rest are defaults in var() fallbacks
+   (--cs-success, --cs-on-error, --cs-font, --cs-font-size, --cs-height, --cs-radius, --cs-blur). */
+
+:host {
+  --cs-bg: rgba(26, 18, 12, 0.7);
+  --cs-fg: #fff8ef;
+  --cs-muted: rgba(255, 248, 239, 0.62);
+  --cs-track: rgba(255, 248, 239, 0.22);
+  --cs-on-success: #2a1b10;
+  --cs-error: #e0574c;
+  --cs-shadow:
+    0 12px 32px -10px rgba(30, 14, 4, 0.55), 0 2px 6px -2px rgba(30, 14, 4, 0.35),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.14);
+  display: contents;
+}
+
+/* Light variant: follows the system, or forced with theme="light". */
+@media (prefers-color-scheme: light) {
+  :host(:not([theme='dark'])) {
+    --cs-bg: rgba(252, 249, 244, 0.76);
+    --cs-fg: #23180f;
+    --cs-muted: rgba(35, 24, 15, 0.55);
+    --cs-track: rgba(35, 24, 15, 0.16);
+    --cs-on-success: #fff8ef;
+    --cs-error: #d4473c;
+    --cs-shadow:
+      0 12px 30px -10px rgba(30, 14, 4, 0.28), 0 2px 6px -2px rgba(30, 14, 4, 0.14),
+      inset 0 0 0 0.5px rgba(30, 14, 4, 0.12);
+  }
+}
+
+:host([theme='light']) {
+  --cs-bg: rgba(252, 249, 244, 0.76);
+  --cs-fg: #23180f;
+  --cs-muted: rgba(35, 24, 15, 0.55);
+  --cs-track: rgba(35, 24, 15, 0.16);
+  --cs-on-success: #fff8ef;
+  --cs-error: #d4473c;
+  --cs-shadow:
+    0 12px 30px -10px rgba(30, 14, 4, 0.28), 0 2px 6px -2px rgba(30, 14, 4, 0.14),
+    inset 0 0 0 0.5px rgba(30, 14, 4, 0.12);
+}
+
+/* The pill is a manual popover, so it renders in the top layer and escapes overflow and stacking
+   contexts. `all: unset` drops the popover UA styles; [hidden] drives display. JS moves it with
+   translate3d + scale + a % translate that puts its cursor-side corner on the anchor point. */
+.p {
+  all: unset;
+  --e: cubic-bezier(0.22, 1, 0.36, 1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  transform-origin: 0 0;
+  display: flex;
+  align-items: center;
+  height: var(--cs-height, 34px);
+  padding-inline: 9px 14px;
+  border-radius: var(--cs-radius, 17px);
+  background: var(--cs-bg);
+  color: var(--cs-fg);
+  -webkit-backdrop-filter: blur(var(--cs-blur, 16px)) saturate(1.5);
+  backdrop-filter: blur(var(--cs-blur, 16px)) saturate(1.5);
+  box-shadow: var(--cs-shadow);
+  font: 560 var(--cs-font-size, 13.5px) / 1 var(--cs-font, system-ui, sans-serif);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.006em;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(6px);
+  transition:
+    opacity 0.26s,
+    filter 0.32s;
+}
+
+.p[hidden] {
+  display: none;
+}
+
+.p[data-on] {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Icon: 18×18, stroke 2, round caps; the slot collapses for icon="none". */
+.i {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-inline-end: 8px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: 0.42s var(--e);
+}
+
+[data-icon='none'] .i {
+  width: 0;
+  margin-inline-end: 5px;
+}
+
+/* Glyphs: each base rule holds the hidden state and the transition; one rule turns them on.
+   The ring fill's dashoffset is sprung by JS, so only its opacity transitions. */
+.i * {
+  transform-origin: 9px 9px;
+  transition: 0.2s;
+}
+
+.t,
+.f,
+.plus,
+.d {
+  opacity: 0;
+}
+
+.t {
+  stroke: var(--cs-track);
+}
+
+.f {
+  stroke-dasharray: 43.98;
+  transition: opacity 0.2s;
+}
+
+.plus {
+  transform: scale(0.6) rotate(-45deg);
+  transition:
+    0.2s,
+    transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+/* check and cross: a disc pops in, then the glyph draws on it */
+.d {
+  stroke: none;
+  fill: var(--cs-success, var(--cs-fg));
+  transform: scale(0);
+  transition:
+    0.2s,
+    transform 0.38s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+[data-icon='cross'] .d {
+  fill: var(--cs-error);
+}
+
+.c,
+.x {
+  stroke: var(--cs-on-success);
+  stroke-dasharray: 12;
+  stroke-dashoffset: 12;
+  transition: 0.32s 0.12s;
+}
+
+.x {
+  stroke: var(--cs-on-error, #fff8ef);
+}
+
+[data-icon='ring'] :is(.t, .f),
+[data-icon='plus'] .plus,
+[data-icon*='c'] .d,
+[data-icon='check'] .c,
+[data-icon='cross'] .x {
+  opacity: 1;
+  transform: none;
+  stroke-dashoffset: 0;
+}
+
+/* Label: the box animates to the measured width; spans morph in and out inside it. */
+.l {
+  position: relative;
+  flex: none;
+  height: 18px;
+  transition: width 0.42s var(--e);
+}
+
+.l > * {
+  position: absolute;
+  inset-inline-start: 0;
+  line-height: 18px;
+  transition:
+    0.3s,
+    transform 0.42s var(--e);
+}
+
+.in,
+.out {
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateY(9px);
+}
+
+.out {
+  transform: translateY(-9px);
+}
+
+/* Trailing dots (<i>) in a fixed-width slot: "", ".", "..", "..." */
+i {
+  font-style: normal;
+  color: var(--cs-muted);
+  animation: d 1.2s steps(4, jump-none) infinite;
+}
+
+i::before {
+  content: '...';
+}
+
+@keyframes d {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+/* Reduced motion (system setting or motion="reduce"): keep only the opacity fade. */
+[data-rm] * {
+  transition: 0s !important;
+  animation: none !important;
+}
+
+.p[data-rm] {
+  filter: none;
+  transition: opacity 0.26s;
+}
+
+.sr {
+  position: fixed;
+  clip-path: inset(50%);
+}
+
+@media (forced-colors: active) {
+  .p {
+    border: 1px solid;
+    background: Canvas;
+  }
+
+  .d,
+  [data-icon*='c'] .d {
+    fill: Highlight;
+  }
+
+  .c,
+  .x {
+    stroke: HighlightText;
+  }
+}

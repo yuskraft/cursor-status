@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "fixture",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "e2e/fixtures", "--port", "5174", "--strictPort"],
+      "port": 5174
+    },
+    {
+      "name": "demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev", "--port", "5173", "--strictPort"],
+      "port": 5173
+    }
+  ]
+}

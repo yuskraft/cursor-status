@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>cursor-status fixture</title>
+    <style>
+      body { margin: 0; font: 14px system-ui, sans-serif; background: #f4f1ec; min-height: 200vh; }
+      .clip { position: absolute; left: 40px; top: 300px; width: 300px; height: 140px; overflow: hidden; transform: translateZ(0); background: #ddd; }
+      #scope { position: absolute; left: 400px; top: 300px; width: 240px; height: 140px; background: #cfe; }
+      #capture { position: absolute; left: 40px; top: 480px; width: 120px; height: 60px; background: #fdc; touch-action: none; }
+      #drop { position: absolute; left: 200px; top: 480px; width: 160px; height: 60px; background: #dcf; }
+    </style>
+  </head>
+  <body>
+    <cursor-status id="cs"></cursor-status>
+    <div class="clip"><cursor-status id="clipped"></cursor-status></div>
+    <div id="scope"><cursor-status id="scoped" scope="#scope"></cursor-status></div>
+    <div id="capture"></div>
+    <div id="drop"></div>
+    <script type="module">
+      import '../../src/define.ts';
+
+      const capture = document.getElementById('capture');
+      capture.addEventListener('pointerdown', (e) => capture.setPointerCapture(e.pointerId));
+      const drop = document.getElementById('drop');
+      drop.addEventListener('dragover', (e) => e.preventDefault());
+      window.ready = true;
+    </script>
+  </body>
+</html>

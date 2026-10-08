@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>cursor-status</title>
+    <meta
+      name="description"
+      content="A status pill that follows the pointer during a gesture. A zero-dependency web component, with nine live demos."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#161616" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='9' width='28' height='14' rx='7' fill='%23231a12'/%3E%3Ccircle cx='9' cy='16' r='3.5' fill='none' stroke='%23fff8ef' stroke-width='1.6'/%3E%3Crect x='15' y='14.6' width='10' height='2.8' rx='1.4' fill='%23fff8ef'/%3E%3C/svg%3E"
+    />
+    <script>
+      // Theme and motion preferences before first paint, so nothing flashes.
+      try {
+        const t = localStorage.getItem('cs-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        if (localStorage.getItem('cs-motion') === 'reduce') document.documentElement.dataset.motion = 'reduce';
+      } catch {}
+      document.documentElement.classList.add('js');
+    </script>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#gallery">Skip to the demos</a>
+
+    <!-- One page-level pill for copy buttons and other one-shot feedback. -->
+    <cursor-status id="page-status"></cursor-status>
+
+    <div class="wrap">
+      <header class="top">
+        <div class="intro">
+          <h1>cursor-status</h1>
+          <p>
+            A status pill that follows the pointer during a gesture, with feedback right where your
+            eyes already are. One web component, no dependencies, 4.3&nbsp;kB gzipped.
+          </p>
+        </div>
+        <div class="bar">
+          <div class="install">
+            <code>npm i @yuskraft/cursor-status</code>
+            <button class="ghost-btn" type="button" data-copy="npm i @yuskraft/cursor-status">
+              Copy
+            </button>
+          </div>
+          <a class="ghost-btn" href="https://github.com/yuskraft/cursor-status">GitHub</a>
+          <div class="toolbar" role="group" aria-label="Preview settings">
+            <button type="button" class="toggle" data-theme-set="dark" aria-pressed="false">
+              Dark
+            </button>
+            <button type="button" class="toggle" data-theme-set="light" aria-pressed="false">
+              Light
+            </button>
+            <button type="button" class="toggle" data-motion-toggle aria-pressed="false">
+              Reduce motion
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section id="gallery" class="grid" aria-label="Demos" tabindex="-1">
+          <!-- 1. Hold to delete -->
+          <article class="tile" id="hold" aria-labelledby="hold-title">
+            <div class="media">
+              <div class="cap"><h2 id="hold-title">Hold to delete</h2><span>Hold</span></div>
+              <div class="stage hold">
+                <ul class="rows">
+                  <li><button class="row" type="button" aria-describedby="hold-help"><span class="fill" aria-hidden="true"></span><svg class="file" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13" /></svg><span class="name">Invoice-0412.pdf</span><span class="size">240 KB</span></button></li>
+                  <li><button class="row" type="button" aria-describedby="hold-help"><span class="fill" aria-hidden="true"></span><svg class="file" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13" /></svg><span class="name">Moodboard v3.fig</span><span class="size">18 MB</span></button></li>
+                  <li><button class="row" type="button" aria-describedby="hold-help"><span class="fill" aria-hidden="true"></span><svg class="file" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13" /></svg><span class="name">Notes from Lisbon.md</span><span class="size">6 KB</span></button></li>
+                  <li><button class="row" type="button" aria-describedby="hold-help"><span class="fill" aria-hidden="true"></span><svg class="file" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13" /></svg><span class="name">Rug-dropzone.mov</span><span class="size">212 MB</span></button></li>
+                </ul>
+                <button class="restore ghost-btn" type="button" hidden>Restore files</button>
+                <p id="hold-help" class="sr-only">Press and hold to delete. Release early to cancel.</p>
+              </div>
+              <cursor-status scope="#hold .stage"></cursor-status>
+            </div>
+            <p class="desc">The ring answers “how long do I hold?”. Let go early and nothing happens.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="hold">View code</button>
+          </article>
+
+          <!-- 2. Drop files -->
+          <article class="tile" id="drop" aria-labelledby="drop-title">
+            <div class="media">
+              <div class="cap"><h2 id="drop-title">Drop files</h2><span>Drag</span></div>
+              <div class="stage drop">
+                <div class="zone">
+                  <svg class="cloud" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V5m0 0-4 4m4-4 4 4M5 15v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3" /></svg>
+                  <p>Drag files from your desktop</p>
+                  <button class="ghost-btn pick" type="button">or choose files</button>
+                  <input type="file" multiple hidden />
+                  <ul class="files" aria-live="polite"></ul>
+                </div>
+                <div class="locked">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" /></svg>
+                  <span>Archive (locked)</span>
+                </div>
+              </div>
+              <cursor-status scope="#drop .stage"></cursor-status>
+            </div>
+            <p class="desc">Says what a drop will do before you let go, including when it can’t.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="drop">View code</button>
+          </article>
+
+          <!-- 3. Resize -->
+          <article class="tile" id="resize" aria-labelledby="resize-title">
+            <div class="media">
+              <div class="cap"><h2 id="resize-title">Resize</h2><span>Canvas</span></div>
+              <div class="stage canvas resize">
+                <div class="box" style="width: 200px; height: 120px">
+                  <span class="dims" aria-hidden="true">200 × 120</span>
+                  <button
+                    class="handle"
+                    type="button"
+                    aria-label="Resize box"
+                    aria-describedby="resize-help"
+                  ></button>
+                </div>
+                <p id="resize-help" class="sr-only">Arrow keys resize. Hold Shift to keep the ratio.</p>
+              </div>
+              <cursor-status scope="#resize .stage"></cursor-status>
+            </div>
+            <p class="desc">Live values while you drag. Hold ⇧ to keep the ratio.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="resize">View code</button>
+          </article>
+
+          <!-- 4. Drag to trash -->
+          <article class="tile" id="trash" aria-labelledby="trash-title">
+            <div class="media">
+              <div class="cap"><h2 id="trash-title">Drag to trash</h2><span>Gesture</span></div>
+              <div class="stage canvas trash">
+                <div class="cards">
+                  <button class="card" type="button" style="--r: -4deg" aria-describedby="trash-help"><b>Groceries</b><span>Oat milk, figs, lemons</span></button>
+                  <button class="card" type="button" style="--r: 3deg" aria-describedby="trash-help"><b>Call back</b><span>Dentist, before Friday</span></button>
+                  <button class="card" type="button" style="--r: -1deg" aria-describedby="trash-help"><b>Ideas</b><span>A rug that eats files</span></button>
+                </div>
+                <div class="bin" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 7V4.5h4V7M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                </div>
+                <button class="restore ghost-btn" type="button" hidden>Restore notes</button>
+                <p id="trash-help" class="sr-only">Drag to the bin to delete, or press Delete.</p>
+              </div>
+              <cursor-status scope="#trash .stage"></cursor-status>
+            </div>
+            <p class="desc">Armed near the bin, it says “Release to delete”. Anywhere else, letting go is safe.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="trash">View code</button>
+          </article>
+
+          <!-- 5. Lasso -->
+          <article class="tile" id="lasso" aria-labelledby="lasso-title">
+            <div class="media">
+              <div class="cap"><h2 id="lasso-title">Lasso</h2><span>Canvas</span></div>
+              <div
+                class="stage canvas lasso"
+                tabindex="0"
+                role="group"
+                aria-label="Dot grid"
+                aria-describedby="lasso-help"
+              >
+                <div class="dots" aria-hidden="true"></div>
+                <div class="marquee" hidden></div>
+                <p id="lasso-help" class="sr-only">Drag to select dots. Control or Command A selects all, Escape clears.</p>
+              </div>
+              <cursor-status scope="#lasso .stage"></cursor-status>
+            </div>
+            <p class="desc">A running count of the selection, at the corner you’re dragging.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="lasso">View code</button>
+          </article>
+
+          <!-- 6. Rotate -->
+          <article class="tile" id="rotate" aria-labelledby="rotate-title">
+            <div class="media">
+              <div class="cap"><h2 id="rotate-title">Rotate</h2><span>Canvas</span></div>
+              <div class="stage canvas rotate">
+                <div
+                  class="dial"
+                  tabindex="0"
+                  role="slider"
+                  aria-label="Rotation"
+                  aria-valuemin="0"
+                  aria-valuemax="359"
+                  aria-valuenow="0"
+                  aria-valuetext="0 degrees"
+                >
+                  <div class="ticks" aria-hidden="true"></div>
+                  <div class="knob" aria-hidden="true"><span class="notch"></span></div>
+                </div>
+              </div>
+              <cursor-status scope="#rotate .stage"></cursor-status>
+            </div>
+            <p class="desc">Turn the dial. It snaps to 15° steps, and tells you when it did.</p>
+            <button class="strip" type="button" aria-expanded="false" data-code="rotate">View code</button>
+          </article>
+
+          <!-- 7. Copy swatch -->
+          <article class="tile" id="swatch" aria-labelledby="swatch-title">
+            <div class="media">
+              <div class="cap"><h2 id="swatch-title">Copy swatch</h2><span>Click</span></div>
+              <div class="stage swatches">
+                <button class="sw" type="button" style="--c: #ff5f57" data-hex="#FF5F57" aria-label="Copy #FF5F57"></button>
+                <button class="sw" type="button" style="--c: #febc2e" data-hex="#FEBC2E" aria-label="Copy #FEBC2E"></button>
+                <button class="sw" type="button" style="--c: #28c840" data-hex="#28C840" aria-label="Copy #28C840"></button>
+                <button class="sw" type="button" style="--c: #3e8bff" data-hex="#3E8BFF" aria-label="Copy #3E8BFF"></button>
+                <button class="sw" type="button" style="--c: #f5d547" data-hex="#F5D547" aria-label="Copy #F5D547"></button>
+              </div>
+              <cursor-status scope="#swatch .stage"></cursor-status>
+            </div>
+            <p class="desc">
+              The one-click case, for contrast: <code>flash()</code> works, but the swatch shows a
+              check too, because a click deserves feedback on the thing you clicked.
+            </p>
+            <button class="strip" type="button" aria-expanded="false" data-code="swatch">View code</button>
+          </article>
+
+          <!-- 8. Playground -->
+          <article class="tile" id="play" aria-labelledby="play-title">
+            <div class="media">
+              <div class="cap"><h2 id="play-title">Playground</h2><span>Play</span></div>
+              <div class="stage canvas play">
+                <p class="hint" aria-hidden="true">Move your pointer here</p>
+              </div>
+              <cursor-status scope="#play .stage"></cursor-status>
+            </div>
+            <form class="controls" aria-label="Playground settings">
+              <fieldset class="seg">
+                <legend class="sr-only">Kind</legend>
+                <label><input type="radio" name="kind" value="info" /><span>Info</span></label>
+                <label><input type="radio" name="kind" value="progress" checked /><span>Progress</span></label>
+                <label><input type="radio" name="kind" value="success" /><span>Success</span></label>
+                <label><input type="radio" name="kind" value="error" /><span>Error</span></label>
+              </fieldset>
+              <label class="field wide"><span>Label</span><input name="label" value="Removing 3 files" maxlength="40" autocomplete="off" /></label>
+              <label class="field"><span>Progress</span><input type="range" name="progress" min="0" max="1" step="0.01" value="0.4" /></label>
+              <label class="field"><span>Stiffness</span><input type="range" name="stiffness" min="4" max="40" step="1" value="16" /></label>
+              <label class="field"><span>Offset x</span><input type="range" name="ox" min="0" max="48" step="1" value="18" /></label>
+              <label class="field"><span>Offset y</span><input type="range" name="oy" min="0" max="48" step="1" value="20" /></label>
+              <label class="field"><span>Placement</span>
+                <select name="placement">
+                  <option>bottom-end</option>
+                  <option>bottom-start</option>
+                  <option>top-end</option>
+                  <option>top-start</option>
+                </select>
+              </label>
+              <label class="field"><span>Icon</span>
+                <select name="icon">
+                  <option value="">by kind</option>
+                  <option>none</option>
+                  <option>plus</option>
+                  <option>ring</option>
+                  <option>check</option>
+                  <option>cross</option>
+                </select>
+              </label>
+              <label class="check"><input type="checkbox" name="dots" checked /><span>Dots</span></label>
+              <button class="ghost-btn" type="button" data-flash>Flash</button>
+            </form>
+            <pre class="live-code"><code></code></pre>
+          </article>
+
+          <!-- 9. When not to use it -->
+          <article class="tile" id="dont" aria-labelledby="dont-title">
+            <div class="media text">
+              <div class="cap"><h2 id="dont-title">When not to use it</h2><span>Notes</span></div>
+              <div class="stage prose">
+                <p>Feedback at the pointer works when it’s <em>about the gesture</em> and over when the gesture is. Reach for something else when:</p>
+                <ul>
+                  <li><b>The result outlives the gesture</b> or needs action. Use a toast with Undo.</li>
+                  <li><b>It’s a plain button click.</b> Show the status on the button.</li>
+                  <li><b>The text is long</b> or needs more than one line.</li>
+                  <li><b>It needs to be clicked.</b> It moves away from the pointer.</li>
+                  <li><b>It would be the only feedback</b> on touch or keyboard. Reflect the outcome in the UI too.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section id="api" class="doc" aria-labelledby="api-title">
+          <h2 id="api-title">API</h2>
+          <pre class="snippet"><code>&lt;cursor-status&gt;&lt;/cursor-status&gt;
+&lt;script type="module"&gt;
+  import '@yuskraft/cursor-status/define';
+  const status = document.querySelector('cursor-status');
+
+  status.show('Removing 3 files', { kind: 'progress', progress: 0, dots: true });
+  status.progress = 0.4;              // springs smoothly
+  status.success('Removed 3 files');  // ring → check, lingers, fades
+&lt;/script&gt;</code></pre>
+
+          <h3>Attributes</h3>
+          <p class="note">Each one is reflected as a property of the same name.</p>
+          <div class="table">
+            <table>
+              <thead><tr><th scope="col">Attribute</th><th scope="col">Values</th><th scope="col">Default</th><th scope="col">Meaning</th></tr></thead>
+              <tbody>
+                <tr><td><code>kind</code></td><td><code>info</code> <code>progress</code> <code>success</code> <code>error</code></td><td><code>info</code></td><td>Icon and colour treatment</td></tr>
+                <tr><td><code>label</code></td><td>string</td><td><code>''</code></td><td>Text shown; changes animate</td></tr>
+                <tr><td><code>progress</code></td><td>0–1</td><td><code>0</code></td><td>Ring fill for <code>progress</code>; springs</td></tr>
+                <tr><td><code>dots</code></td><td>boolean</td><td>false</td><td>Animated trailing “…”</td></tr>
+                <tr><td><code>icon</code></td><td><code>none</code> <code>plus</code> <code>ring</code> <code>check</code> <code>cross</code></td><td>by <code>kind</code></td><td>Override the icon</td></tr>
+                <tr><td><code>open</code></td><td>boolean</td><td>false</td><td>Visible or not; <code>show()</code> and <code>hide()</code> set it</td></tr>
+                <tr><td><code>follow</code></td><td><code>pointer</code> <code>manual</code></td><td><code>pointer</code></td><td>Track the pointer, or position with <code>moveTo()</code></td></tr>
+                <tr><td><code>scope</code></td><td>CSS selector</td><td>document</td><td>Only follow and stay visible while the pointer is inside</td></tr>
+                <tr><td><code>placement</code></td><td><code>bottom-end</code> <code>bottom-start</code> <code>top-end</code> <code>top-start</code></td><td><code>bottom-end</code></td><td>Side of the cursor; logical, so it flips in RTL</td></tr>
+                <tr><td><code>offset</code></td><td><code>"x y"</code> px</td><td><code>"18 20"</code></td><td>Gap from the cursor</td></tr>
+                <tr><td><code>linger</code></td><td>ms</td><td><code>1100</code></td><td>How long a success stays after the gesture ends</td></tr>
+                <tr><td><code>theme</code></td><td><code>light</code> <code>dark</code></td><td>system</td><td>Force a theme</td></tr>
+                <tr><td><code>motion</code></td><td><code>reduce</code></td><td>system</td><td>Force reduced motion</td></tr>
+                <tr><td><code>stiffness</code></td><td>number</td><td><code>16</code></td><td>Follow spring ω</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Methods</h3>
+          <div class="table">
+            <table>
+              <thead><tr><th scope="col">Method</th><th scope="col">Does</th></tr></thead>
+              <tbody>
+                <tr><td><code>show(label, opts?)</code></td><td>Show, or morph if visible. <code>opts</code>: <code>kind</code>, <code>progress</code>, <code>dots</code>, <code>icon</code>.</td></tr>
+                <tr><td><code>info(label, opts?)</code></td><td><code>show()</code> with <code>kind: 'info'</code></td></tr>
+                <tr><td><code>error(label, opts?)</code></td><td><code>show()</code> with <code>kind: 'error'</code></td></tr>
+                <tr><td><code>success(label?, opts?)</code></td><td>Ring → check; stays until <code>linger</code> ms after the gesture ends, then fades</td></tr>
+                <tr><td><code>flash(label, opts?)</code></td><td>One-shot: show, succeed, fade</td></tr>
+                <tr><td><code>hide({ delay }?)</code></td><td>Fade out, optionally later</td></tr>
+                <tr><td><code>moveTo(x, y)</code></td><td>Position in client px, for <code>follow="manual"</code> or to anchor at a drop point</td></tr>
+                <tr><td><code>announce(text)</code></td><td>Say something through the polite live region</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Events</h3>
+          <div class="table">
+            <table>
+              <thead><tr><th scope="col">Event</th><th scope="col">When</th></tr></thead>
+              <tbody>
+                <tr><td><code>cursor-status:shown</code></td><td>The pill appeared on screen. Bubbles.</td></tr>
+                <tr><td><code>cursor-status:hidden</code></td><td>The pill started to disappear. Bubbles.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="theming" class="doc" aria-labelledby="theming-title">
+          <h2 id="theming-title">Theming</h2>
+          <p class="note">
+            Custom properties on the element. It ships dark and light variants: the light one follows
+            <code>prefers-color-scheme</code>, or force either with <code>theme="light|dark"</code>.
+            Style the internals with <code>::part(pill)</code>, <code>::part(icon)</code> and
+            <code>::part(label)</code>.
+          </p>
+          <div class="theming">
+            <div class="preview">
+              <div class="presets" role="group" aria-label="Preset">
+                <button type="button" class="toggle" aria-pressed="true" data-preset="default">Default</button>
+                <button type="button" class="toggle" aria-pressed="false" data-preset="paper">Paper</button>
+                <button type="button" class="toggle" aria-pressed="false" data-preset="lemon">Lemon</button>
+                <button type="button" class="toggle" aria-pressed="false" data-preset="square">Square</button>
+              </div>
+              <div class="stage swatch-stage" id="theme-stage">
+                <p class="hint" aria-hidden="true">Hover to preview</p>
+                <cursor-status scope="#theme-stage"></cursor-status>
+              </div>
+              <pre class="snippet theme-css"><code></code></pre>
+            </div>
+            <div class="table tokens">
+              <table>
+                <thead><tr><th scope="col">Token</th><th scope="col">Default</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="a11y" class="doc" aria-labelledby="a11y-title">
+          <h2 id="a11y-title">Accessibility</h2>
+          <ul class="list">
+            <li><b>It’s supplementary.</b> The pill shows how a gesture is going; the real outcome must also show up in the UI (the row disappears, the file appears in the list).</li>
+            <li><b>Screen readers hear results, not ticks.</b> The visual pill is <code>aria-hidden</code>; state changes and final results go to a polite live region inside the element.</li>
+            <li><b>Keyboard and touch.</b> Every demo here also works from the keyboard. On touch, the pill sits above the finger. Use <code>follow="manual"</code> with <code>moveTo()</code> to anchor it to a focused control.</li>
+            <li><b>Reduced motion</b> snaps position and keeps only the fade. <b>Forced colours</b> switch to system colours with a visible border.</li>
+            <li><b>Contrast</b> of the text on both default surfaces is above 4.5:1, even over white or black.</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <span>MIT licensed</span>
+        <a href="https://github.com/yuskraft/cursor-status">Source on GitHub</a>
+        <a href="https://www.npmjs.com/package/@yuskraft/cursor-status">npm</a>
+      </footer>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+[
+  {
+    "name": "@yuskraft/cursor-status/define",
+    "path": "dist/define.js",
+    "limit": "4.4 kB",
+    "gzip": true
+  },
+  {
+    "name": "@yuskraft/cursor-status (class only)",
+    "path": "dist/index.js",
+    "import": "{ CursorStatus }",
+    "limit": "4.4 kB",
+    "gzip": true
+  }
+]

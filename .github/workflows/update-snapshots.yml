@@ -1,0 +1,27 @@
+name: Update snapshots
+
+# Visual baselines are per platform. Run this to create or refresh the Linux ones CI compares
+# against, then commit the uploaded files into e2e/cursor-status.spec.ts-snapshots/.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm e2e --grep "visual|overflow" --update-snapshots=all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-snapshots
+          path: e2e/cursor-status.spec.ts-snapshots/*-linux.png
