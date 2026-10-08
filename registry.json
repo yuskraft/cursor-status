@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "yuskraft",
+  "homepage": "https://yuskraft.github.io/cursor-status/",
+  "items": [
+    {
+      "name": "cursor-status",
+      "type": "registry:component",
+      "title": "Cursor Status",
+      "description": "A status pill that follows the pointer during a gesture: hold to delete, drag and drop, resize, rotate.",
+      "author": "Nurlan Yusifli (@yuskraft)",
+      "dependencies": ["@yuskraft/cursor-status"],
+      "files": [
+        {
+          "path": "registry/cursor-status/cursor-status.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/cursor-status/use-cursor-status.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "css": {
+        "@layer components": {
+          "cursor-status": {
+            "--cs-bg": "color-mix(in oklab, var(--popover) 86%, transparent)",
+            "--cs-fg": "var(--popover-foreground)",
+            "--cs-muted": "color-mix(in oklab, var(--popover-foreground) 60%, transparent)",
+            "--cs-track": "color-mix(in oklab, var(--popover-foreground) 20%, transparent)",
+            "--cs-success": "var(--popover-foreground)",
+            "--cs-on-success": "var(--popover)",
+            "--cs-error": "var(--destructive)",
+            "--cs-on-error": "var(--destructive-foreground, white)",
+            "--cs-radius": "var(--radius)",
+            "--cs-font": "var(--font-sans, system-ui, sans-serif)",
+            "--cs-shadow": "0 10px 30px -10px rgb(0 0 0 / 0.3), 0 2px 6px -2px rgb(0 0 0 / 0.12), inset 0 0 0 1px var(--border)"
+          }
+        }
+      },
+      "docs": "Render <CursorStatus ref={ref} scope=\"#area\" /> next to the area it reports on, then call show(), success() or flash() from your gesture handlers. useCursorStatus() returns the ref and stable helpers. Docs: https://yuskraft.github.io/cursor-status/"
+    }
+  ]
+}

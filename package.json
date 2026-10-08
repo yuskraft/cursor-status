@@ -13,7 +13,10 @@
     "drag-and-drop"
   ],
   "license": "MIT",
-  "author": "Nurlan Yusifli",
+  "author": {
+    "name": "Nurlan Yusifli",
+    "url": "https://github.com/yuskraft"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yuskraft/cursor-status.git"
@@ -46,7 +49,8 @@
   "scripts": {
     "dev": "vite --config demo/vite.config.ts",
     "build": "vite build && tsc -p tsconfig.build.json",
-    "build:demo": "vite build --config demo/vite.config.ts",
+    "build:demo": "pnpm registry:build && vite build --config demo/vite.config.ts",
+    "registry:build": "shadcn build --output demo/public/r",
     "preview": "vite preview --config demo/vite.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
@@ -63,7 +67,12 @@
     "@biomejs/biome": "^2.5.15",
     "@playwright/test": "^1.63.0",
     "@size-limit/preset-small-lib": "^14.1.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "happy-dom": "^20.14.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "shadcn": "^4.21.3",
     "size-limit": "^14.1.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.3",

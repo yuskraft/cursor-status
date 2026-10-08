@@ -4,7 +4,8 @@ A status pill that follows the pointer during a gesture: “Removing 3 files…�
 One dependency-free web component, with a spring follow, a text morph and a ring that turns into a
 check.
 
-**[Live demos →](https://yuskraft.github.io/cursor-status/)**
+**[Live demos →](https://yuskraft.github.io/cursor-status/)** · by
+[Nurlan Yusifli](https://github.com/yuskraft) ([@yuskraft](https://github.com/yuskraft))
 
 ```html
 <cursor-status></cursor-status>
@@ -61,6 +62,34 @@ Or register it yourself, under any tag:
 import { CursorStatus } from '@yuskraft/cursor-status'; // no side effects
 customElements.define('drag-status', CursorStatus);
 ```
+
+### With shadcn
+
+A React wrapper, a hook, and the theme tokens mapped to yours (`--popover`, `--popover-foreground`,
+`--destructive`, `--radius`, `--border`):
+
+```sh
+npx shadcn@latest add https://yuskraft.github.io/cursor-status/r/cursor-status.json
+```
+
+```tsx
+import { CursorStatus } from '@/components/cursor-status';
+import { useCursorStatus } from '@/hooks/use-cursor-status';
+
+function Files() {
+  const status = useCursorStatus();
+  return (
+    <div id="files" onDragOver={() => status.info('Drop 3 files', { icon: 'plus' })}>
+      …
+      <CursorStatus ref={status.ref} scope="#files" />
+    </div>
+  );
+}
+```
+
+The element is registered in `useEffect`, so it's safe with server rendering; helpers called
+before that wait for it. The token mapping expects shadcn's Tailwind v4 theme (colour values in the
+variables, as in `oklch(...)`).
 
 Without a bundler:
 
@@ -224,6 +253,7 @@ pnpm e2e          # end-to-end tests (Playwright: Chromium, Firefox, WebKit)
 pnpm lint         # Biome
 pnpm typecheck
 pnpm build        # dist/ (ESM + .d.ts)
+pnpm registry:build  # shadcn registry JSON into demo/public/r (also part of build:demo)
 pnpm size
 ```
 
@@ -236,4 +266,4 @@ Started as the status pill of a rug-shaped file dropzone.
 
 ## License
 
-MIT
+MIT © [Nurlan Yusifli](https://github.com/yuskraft) ([@yuskraft](https://github.com/yuskraft))

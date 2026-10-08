@@ -8,6 +8,7 @@
       name="description"
       content="A status pill that follows the pointer during a gesture. A zero-dependency web component, with nine live demos."
     />
+    <meta name="author" content="Nurlan Yusifli (@yuskraft)" />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#161616" />
     <link
@@ -35,6 +36,10 @@
       <header class="top">
         <div class="intro">
           <h1>cursor-status</h1>
+          <p class="by">
+            by <a href="https://github.com/yuskraft">Nurlan Yusifli</a>
+            <span>@yuskraft</span>
+          </p>
           <p>
             A status pill that follows the pointer during a gesture, with feedback right where your
             eyes already are. One web component, no dependencies, 4.3&nbsp;kB gzipped.
@@ -293,6 +298,13 @@
   status.success('Removed 3 files');  // ring → check, lingers, fades
 &lt;/script&gt;</code></pre>
 
+          <h3>With shadcn</h3>
+          <p class="note">
+            A React wrapper and a <code>useCursorStatus()</code> hook, with the tokens mapped to your
+            theme.
+          </p>
+          <pre class="snippet"><code>npx shadcn@latest add https://yuskraft.github.io/cursor-status/r/cursor-status.json</code></pre>
+
           <h3>Attributes</h3>
           <p class="note">Each one is reflected as a property of the same name.</p>
           <div class="table">
@@ -390,7 +402,7 @@
       </main>
 
       <footer class="foot">
-        <span>MIT licensed</span>
+        <span>MIT © <a href="https://github.com/yuskraft">Nurlan Yusifli</a> · @yuskraft</span>
         <a href="https://github.com/yuskraft/cursor-status">Source on GitHub</a>
         <a href="https://www.npmjs.com/package/@yuskraft/cursor-status">npm</a>
       </footer>

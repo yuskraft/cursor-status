@@ -17,7 +17,8 @@
     "paths": {
       "@yuskraft/cursor-status": ["./src/index.ts"],
       "@yuskraft/cursor-status/define": ["./src/define.ts"]
-    }
+    },
+    "jsx": "react-jsx"
   },
-  "include": ["src", "test", "e2e", "demo", "*.config.ts"]
+  "include": ["src", "test", "e2e", "demo", "registry", "*.config.ts"]
 }

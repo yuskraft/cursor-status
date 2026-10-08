@@ -160,6 +160,25 @@ pre code {
   color: var(--muted);
 }
 
+.intro .by {
+  margin: -4px 0 8px;
+  font-size: 13px;
+}
+
+.intro .by a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.intro .by a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.intro .by span {
+  margin-left: 4px;
+}
+
 .bar {
   display: flex;
   flex-wrap: wrap;
